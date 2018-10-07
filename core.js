@@ -99,7 +99,7 @@ async function autoAddRecommendSongs () {
     const response = await api.createPlaylist(playlistName)
     if (response.code !== 200) {
       winston.error('创建歌单失败, 错误信息: ' + response.msg)
-      return
+      throw new Error('创建歌单失败！')
     }
 
     // 保存歌单数据
@@ -130,7 +130,7 @@ async function autoAddRecommendSongs () {
     if (!recommendSongsDaily.code || recommendSongsDaily.code !== 200) {
       winston.verbose(recommendSongsDaily)
       winston.error('获取日推失败!')
-      return
+      throw new Error('获取日推失败')
     }
     winston.verbose('开始分析日推列表...')
     Status[date].Songs = []
@@ -154,7 +154,7 @@ async function autoAddRecommendSongs () {
     } else {
       winston.error('写入歌单失败')
       winston.verbose(response)
-      return
+      throw new Error('写入歌单失败');
     }
   }
 
@@ -185,7 +185,7 @@ async function autoSign () {
     } else {
       winston.verbose(signResult)
       winston.error('签到失败。')
-      return
+      throw new Error('签到失败')
     }
   }
 
@@ -215,6 +215,12 @@ async function startCronJob () {
         .then(autoAddRecommendSongs)
         .then(() => {
           winston.info(`本次任务已经全部执行完毕, 耗时: ${Date.now() - startTime}ms.`)
+        })
+        .catch(err => {
+          console.error(err)
+          winston.error('在执行计划任务的过程中遇到问题， 这通常可能是 Cookie 错误。 为了您的账户安全， 程序将会终止。 强烈建议您使用 pm2 挂本接口。')
+          fs.unlinkSync(userFile)
+          process.exit(1)
         })
     },
     onComplete: () => {
@@ -252,6 +258,12 @@ async function startCronJob () {
 
       // 执行一波收藏日推
       autoAddRecommendSongs()
+      .catch(err => {
+        console.error(err)
+        winston.error('在执行计划任务的过程中遇到问题， 这通常可能是 Cookie 错误。 为了您的账户安全， 程序将会终止。 强烈建议您使用 pm2 挂本接口。')
+        fs.unlinkSync(userFile)
+        process.exit(1)
+      })
     },
     onComplete: () => {
       winston.error('Clear Job is stopped. Restart it.')
@@ -284,10 +296,11 @@ Promise.resolve()
 
   // 完成
   .then(() => {
-    winston.info(`耗时: ${Date.now() - global.startTime}ms. 模块测试执行完成， 测试通过。已成功激活定时任务。`)
+    winston.info(`耗时: ${Date.now() - global.startTime}ms. 执行模块测试完成。测试通过。激活定时任务成功。`)
     delete global.startTime
   })
   .catch(err => {
+    winston.error(`耗时: ${Date.now() - global.startTime}ms. 模块测试失败， 为了保护您的账户安全， 程序自动退出。`)
     winston.error(err)
     process.exit(1)
   })

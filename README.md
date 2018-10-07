@@ -5,8 +5,8 @@
   
 ## 使用
 ```
-# npm i -g pnpm
-pnpm i --production
+# npm i -g yarn
+yarn --production
 ```
 然后只需简单得配置一下 `config.json`, 即可正常使用。
 

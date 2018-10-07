@@ -17,7 +17,8 @@ class Personal extends Base {
       'music.163.com',
       '/weapi/playlist/create',
       'POST',
-      data
+      data,
+      'os=PC; Path=/;'
     )
   }
 

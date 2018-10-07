@@ -5,7 +5,7 @@ const _ = require('lodash')
 const Cookie = require('cookie')
 const Encrypt = require('./crypto')
 
-function randomUserAgent () {
+function randomUserAgent() {
   const userAgentList = [
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36',
     'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1',
@@ -32,7 +32,7 @@ function randomUserAgent () {
   return userAgentList[num]
 }
 
-async function createWebAPIRequest (
+async function createWebAPIRequest(
   host,
   path,
   method,
@@ -90,15 +90,17 @@ async function createWebAPIRequest (
       delete cookieObj.Expires
       delete cookieObj.Path
       delete cookieObj.Domain
-
       // 抹除完之后应该就一个参数了， 迭代只执行一次
       // console.log(cookieObj)
+      
       await _.map(cookieObj, value => {
         if (!value) {
           // 为空， 加入删除数组
           cookieToRemove.push(current)
         }
       })
+      // console.log(cookieObj)
+      // console.log(cookie)
     }
     // 移除参数
     _.pull(cookie, cookieToRemove)
@@ -109,7 +111,7 @@ async function createWebAPIRequest (
   }
 }
 
-async function createRequest (path, method, data) {
+async function createRequest(path, method, data) {
   const options = {
     method,
     headers: {
