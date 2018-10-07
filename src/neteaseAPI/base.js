@@ -40,6 +40,15 @@ class base {
       winston.verbose(this.cookie)
       winston.verbose(respData)
     }
+    if (!this.user && !(respData.data && respData.data.loginType)) {
+      if (!respData.data || !respData.data.msg) {
+         winston.error('在尝试登录时遇到错误: 无法获取到响应信息， 可能是网络错误')
+      } else {
+        winston.error('在尝试登录时遇到错误: ' + respData.data.msg)
+      }
+      // 退出进程
+      process.exit(1)
+    }
     const userData = {
       cookie: respData.cookie && respData.cookie.length > 1 ? respData.cookie : this.cookie,
       data: respData.data && respData.data.loginType ? respData.data : this.user.info

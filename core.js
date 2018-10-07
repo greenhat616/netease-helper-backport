@@ -98,7 +98,7 @@ async function autoAddRecommendSongs () {
     winston.verbose('未发现本月收藏歌单， 开始自动创建...')
     const response = await api.createPlaylist(playlistName)
     if (response.code !== 200) {
-      winston.error('创建歌单失败')
+      winston.error('创建歌单失败, 错误信息: ' + response.msg)
       return
     }
 
