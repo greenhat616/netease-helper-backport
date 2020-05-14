@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/a632079/netease-daily#readme",
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.19.2",
     "big-integer": "^1.6.28",
     "bluebird": "^3.5.1",
     "colors": "^1.2.5",
